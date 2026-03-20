@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Personalidad</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #fdf8e1;
+    --papel-linea: #b8d4e8;
+    --papel-margen: #f4a0a0;
+    --tinta: #1a3a5c;
+    --tinta-suave: #2d5a8a;
+    --lapiz: #4a3728;
+    --rojo: #d63031;
+    --verde: #00b894;
+    --morado: #6c5ce7;
+    --naranja: #e17055;
+    --amarillo: #fdcb6e;
+    --sombra: rgba(0,0,0,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #4a7c59;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,0.15) 39px, rgba(0,0,0,0.15) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,0,0,0.08) 39px, rgba(0,0,0,0.08) 40px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 16px 60px;
+    font-family: 'Patrick Hand', cursive;
+  }
+
+  .cuaderno {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+  }
+
+  /* Espiral del cuaderno */
+  .espiral {
+    position: absolute;
+    left: -18px;
+    top: 20px;
+    bottom: 20px;
+    width: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+    z-index: 10;
+  }
+  .argolla {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #888;
+    border: 2px solid #555;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+
+  .hoja {
+    background: var(--papel);
+    border-radius: 2px 8px 8px 2px;
+    box-shadow: 4px 4px 0 #c8a96e, 8px 8px 0 #b8965c, 3px 3px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    position: relative;
+    padding-left: 70px;
+  }
+
+  /* Líneas del cuaderno */
+  .hoja::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        transparent, transparent 31px,
+        var(--papel-linea) 31px, var(--papel-linea) 32px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Margen rojo */
+  .hoja::before {
+    content: '';
+    position: absolute;
+    left: 60px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--papel-margen);
+    z-index: 1;
+  }
+
+  /* Perforaciones */
+  .perforaciones {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: #e8dfc0;
+    border-right: 1px solid #c8b48a;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 40px 0;
+  }
+  .perfo {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--papel);
+    border: 1px solid #c0a878;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .contenido {
+    position: relative;
+    z-index: 3;
+    padding: 28px 24px 32px 16px;
+  }
+
+  /* Encabezado estilo cuaderno */
+  .encabezado {
+    border-bottom: 2px solid var(--rojo);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .encabezado-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 6px;
+  }
+  .linea-dato {
+    border-bottom: 1px solid var(--tinta);
+    height: 24px;
+    position: relative;
+  }
+  .linea-dato label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    color: var(--tinta-suave);
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+  }
+  .fecha-box {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .fecha-campo {
+    text-align: center;
+    width: 36px;
+    border: 1px solid var(--tinta);
+    border-radius: 2px;
+    height: 24px;
+    background: transparent;
+    font-family: 'Caveat', cursive;
+    font-size: 14px;
+    color: var(--tinta);
+  }
+  .fecha-label {
+    font-size: 10px;
+    color: var(--tinta-suave);
+    display: block;
+    text-align: center;
+    margin-top: -2px;
+  }
+  .titulo-test {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--tinta);
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    text-decoration: underline;
+    text-decoration-color: var(--rojo);
+    text-underline-offset: 4px;
+  }
+  .subtitulo {
+    font-size: 13px;
+    color: var(--tinta-suave);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* Progreso */
+  .progreso-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .progreso-label {
+    font-family: 'Caveat', cursive;
+    font-size: 13px;
+    color: var(--tinta-suave);
+    white-space: nowrap;
+  }
+  .progreso-linea {
+    flex: 1;
+    height: 8px;
+    background: #e0d5b0;
+    border-radius: 4px;
+    border: 1px solid #c8b48a;
+    overflow: hidden;
+  }
+  .progreso-fill {
+    height: 100%;
+    background: var(--rojo);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    background-image: repeating-linear-gradient(
+      45deg, transparent, transparent 4px,
+      rgba(255,255,255,0.3) 4px, rgba(255,255,255,0.3) 8px
+    );
+  }
+
+  /* Número de pregunta */
+  .num-pregunta {
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: var(--rojo);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .num-pregunta::before {
+    content: '•';
+    font-size: 20px;
+  }
+
+  /* Pregunta */
+  .pregunta-texto {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--tinta);
+    margin-bottom: 18px;
+    line-height: 1.3;
+    padding-left: 4px;
+  }
+
+  /* Opciones */
+  .opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .opcion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 2px 0;
+    transition: transform 0.1s;
+  }
+  .opcion:hover { transform: translateX(4px); }
+  .opcion:hover .opcion-texto { color: var(--rojo); }
+
+  .circulo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--tinta);
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .opcion.seleccionada .circulo {
+    border-color: var(--rojo);
+    background: var(--rojo);
+  }
+  .opcion.seleccionada .circulo::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: white;
+  }
+  .opcion-texto {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: var(--tinta);
+    transition: color 0.15s;
+  }
+  .opcion.seleccionada .opcion-texto {
+    color: var(--rojo);
+    font-weight: 600;
+  }
+
+  /* Navegación */
+  .nav-botones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--tinta-suave);
+  }
+  .btn {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid var(--tinta);
+    background: transparent;
+    color: var(--tinta);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--tinta);
+    color: var(--papel);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 0 var(--lapiz);
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .btn-siguiente {
+    background: var(--tinta);
+    color: var(--papel);
+    box-shadow: 0 3px 0 var(--lapiz);
+  }
+  .btn-siguiente:hover:not(:disabled) {
+    background: var(--rojo);
+    border-color: var(--rojo);
+    box-shadow: 0 3px 0 #8b1a1a;
+  }
+  .btn-siguiente:disabled {
+    background: #c0b090;
+    border-color: #c0b090;
+    color: #8a7a60;
+    box-shadow: none;
+  }
+
+  /* Resultado */
+  .resultado { display: none; }
+  .resultado.visible { display: block; }
+  .quiz-main.oculto { display: none; }
+
+  .estrella-resultado {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .estrella-resultado span {
+    font-size: 52px;
+  }
+
+  .tipo-personalidad {
+    font-family: 'Caveat', cursive;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--tinta);
+    text-align: center;
+    border-bottom: 3px solid var(--rojo);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .puntuacion-badge {
+    display: inline-block;
+    background: var(--rojo);
+    color: white;
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    padding: 4px 16px;
+    border-radius: 20px;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
+  .descripcion-resultado {
+    font-size: 16px;
+    color: var(--lapiz);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: rgba(255,255,255,0.5);
+    border-left: 3px solid var(--rojo);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .resumen-titulo {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: var(--tinta-suave);
+    margin-bottom: 10px;
+    text-decoration: underline;
+  }
+
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .resumen-item {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: var(--lapiz);
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    line-height: 1.4;
+  }
+  .resumen-item::before {
+    content: attr(data-num) '.';
+    color: var(--rojo);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .btn-reiniciar {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px dashed var(--tinta);
+    background: transparent;
+    color: var(--tinta);
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .btn-reiniciar:hover {
+    background: var(--tinta);
+    color: var(--papel);
+    border-style: solid;
+  }
+
+  /* Decoraciones dibujadas */
+  .deco-estrella {
+    position: absolute;
+    font-size: 18px;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  @keyframes aparecer {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .pregunta-wrap {
+    animation: aparecer 0.25s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="cuaderno">
+  <!-- Espiral -->
+  <div class="espiral" id="espiral"></div>
+
+  <div class="hoja">
+    <div class="perforaciones">
+      <div class="perfo"></div>
+      <div class="perfo"></div>
+      <div class="perfo"></div>
+      <div class="perfo"></div>
+    </div>
+
+    <div class="contenido">
+      <!-- Encabezado -->
+      <div class="encabezado">
+        <div class="encabezado-grid">
+          <div>
+            <div class="linea-dato"><label>Nombre: ___________________________</label></div>
+          </div>
+          <div class="fecha-box">
+            <div>
+              <input class="fecha-campo" type="text" maxlength="2" placeholder="DD">
+              <span class="fecha-label">día</span>
+            </div>
+            <div>
+              <input class="fecha-campo" type="text" maxlength="2" placeholder="MM">
+              <span class="fecha-label">mes</span>
+            </div>
+            <div>
+              <input class="fecha-campo" style="width:44px" type="text" maxlength="4" placeholder="AAAA">
+              <span class="fecha-label">año</span>
+            </div>
+          </div>
+        </div>
+        <div class="titulo-test">- Test de Personalidad -</div>
+        <div class="subtitulo">Elige la opción que más te represente ✏️</div>
+      </div>
+
+      <!-- Progreso -->
+      <div class="progreso-wrap">
+        <span class="progreso-label" id="prog-label">Pregunta 1/10</span>
+        <div class="progreso-linea">
+          <div class="progreso-fill" id="prog-fill" style="width:10%"></div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="quiz-main" id="quiz-main">
+        <div class="pregunta-wrap" id="pregunta-wrap">
+          <div class="num-pregunta" id="num-preg">1d</div>
+          <div class="pregunta-texto" id="preg-texto"></div>
+          <div class="opciones" id="opciones"></div>
+        </div>
+        <div class="nav-botones">
+          <button class="btn" id="btn-prev" onclick="anterior()">← Anterior</button>
+          <button class="btn btn-siguiente" id="btn-next" onclick="siguiente()" disabled>Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="resultado" id="resultado">
+        <div class="estrella-resultado"><span id="r-emoji"></span></div>
+        <div class="tipo-personalidad" id="r-tipo"></div>
+        <div class="puntuacion-badge" id="r-puntos"></div>
+        <div class="descripcion-resultado" id="r-desc"></div>
+        <div class="resumen-titulo">Tus respuestas:</div>
+        <div class="resumen-grid" id="r-resumen"></div>
+        <button class="btn-reiniciar" onclick="reiniciar()">↺ Volver a intentarlo</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const preguntas = [
+  { texto: "¿Qué eres: team sangre o team carne?", opciones: ["Team Sangre", "Team Carne"] },
+  { texto: "¿Ronaldo o Messi?", opciones: ["Ronaldo", "Messi"] },
+  { texto: "¿Basquet o Futbol?", opciones: ["Basquet", "Futbol"] },
+  { texto: "¿Sabor de helado?", opciones: ["Vainilla", "Chocolate", "Fresa"] },
+  { texto: "¿Marvel o DC?", opciones: ["Marvel", "DC"] },
+  { texto: "¿Frío o Caliente?", opciones: ["Frío", "Caliente"] },
+  { texto: "¿Café o Té?", opciones: ["Café", "Té"] },
+  { texto: "¿Deporte o Videojuegos?", opciones: ["Deporte", "Videojuegos"] },
+  { texto: "¿Navidad o Día de Muertos?", opciones: ["Navidad", "Día de Muertos"] },
+  { texto: "¿Qué prefieres: papaya, plátano o ensalada?", opciones: ["Papaya", "Plátano", "Ensalada"] },
+];
+
+const resultados = [
+  { rango: [1,5],  tipo: "Extrovertido",  emoji: "🌟", desc: "Eres una persona llena de energía que disfruta estar con la gente. Tu entusiasmo es contagioso y siempre animas a quienes te rodean. ¡Eres el alma de la fiesta!" },
+  { rango: [6,10], tipo: "Introvertido",  emoji: "📚", desc: "Eres reflexivo y valoras tu espacio personal. Prefieres las conversaciones profundas y encuentras tu energía en la calma y la soledad. ¡Sabio y tranquilo!" },
+  { rango: [11,15],tipo: "Bipolar",       emoji: "⚡", desc: "Eres dinámico con muchas facetas. Tu personalidad cambia según el contexto y eso te hace muy adaptable e interesante. ¡Nunca te aburres!" },
+  { rango: [16,20],tipo: "Ansioso",       emoji: "🌀", desc: "Eres muy reflexivo y piensas todo a detalle. Esa profundidad viene con gran creatividad y empatía. ¡Eres único!" },
+];
+
+const scoreMap = {
+  "Team Sangre":1,"Team Carne":2,"Ronaldo":2,"Messi":1,
+  "Basquet":2,"Futbol":1,"Vainilla":1,"Chocolate":2,"Fresa":2,
+  "Marvel":2,"DC":1,"Frío":1,"Caliente":2,"Café":2,"Té":1,
+  "Deporte":1,"Videojuegos":2,"Navidad":1,"Día de Muertos":2,
+  "Papaya":1,"Plátano":2,"Ensalada":1,
+};
+
+let actual = 0;
+let respuestas = new Array(10).fill(null);
+
+// Generar argollas
+const espiral = document.getElementById('espiral');
+for(let i=0;i<18;i++){
+  const a = document.createElement('div');
+  a.className='argolla';
+  espiral.appendChild(a);
+}
+
+function render() {
+  const p = preguntas[actual];
+  document.getElementById('num-preg').textContent = (actual+1)+'d';
+  document.getElementById('preg-texto').textContent = p.texto;
+  document.getElementById('prog-label').textContent = `Pregunta ${actual+1}/10`;
+  document.getElementById('prog-fill').style.width = `${((actual+1)/10)*100}%`;
+
+  const op = document.getElementById('opciones');
+  op.innerHTML = '';
+  p.opciones.forEach(opt => {
+    const div = document.createElement('label');
+    div.className = 'opcion' + (respuestas[actual]===opt?' seleccionada':'');
+    div.innerHTML = `<div class="circulo"></div><span class="opcion-texto">${opt}</span>`;
+    div.onclick = () => elegir(opt);
+    op.appendChild(div);
+  });
+
+  document.getElementById('btn-prev').style.visibility = actual===0?'hidden':'visible';
+  const btnNext = document.getElementById('btn-next');
+  btnNext.disabled = respuestas[actual]===null;
+  btnNext.textContent = actual===9 ? 'Ver resultado ✓' : 'Siguiente →';
+
+  // Reanimar
+  const w = document.getElementById('pregunta-wrap');
+  w.style.animation = 'none';
+  w.offsetHeight;
+  w.style.animation = '';
+}
+
+function elegir(opt) {
+  respuestas[actual] = opt;
+  render();
+}
+
+function siguiente() {
+  if(actual<9){ actual++; render(); }
+  else mostrarResultado();
+}
+
+function anterior() {
+  if(actual>0){ actual--; render(); }
+}
+
+function mostrarResultado() {
+  const score = respuestas.reduce((s,a)=>s+(a?scoreMap[a]||1:1),0);
+  const res = resultados.find(r=>score>=r.rango[0]&&score<=r.rango[1])||resultados[3];
+
+  document.getElementById('r-emoji').textContent = res.emoji;
+  document.getElementById('r-tipo').textContent = res.tipo;
+  document.getElementById('r-puntos').textContent = `Puntuación: ${score} / 20`;
+  document.getElementById('r-desc').textContent = res.desc;
+
+  const grid = document.getElementById('r-resumen');
+  grid.innerHTML = respuestas.map((r,i)=>
+    `<div class="resumen-item" data-num="${i+1}">${r||'—'}</div>`
+  ).join('');
+
+  document.getElementById('quiz-main').classList.add('oculto');
+  document.getElementById('resultado').classList.add('visible');
+}
+
+function reiniciar() {
+  actual=0; respuestas=new Array(10).fill(null);
+  document.getElementById('quiz-main').classList.remove('oculto');
+  document.getElementById('resultado').classList.remove('visible');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
